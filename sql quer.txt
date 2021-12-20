@@ -1,0 +1,49 @@
+the percentage of sale per media type
+SELECT
+    *,
+    (SELECT
+      ROUND(ROUND((total_qty * 100), 2) / SUM(quantity), 2)
+    FROM invoiceline)
+    percentage
+
+  FROM (SELECT
+    m.name media_type,
+    SUM(quantity) AS total_qty
+  FROM mediatype m
+  JOIN track t
+    ON t.mediatypeid = m.mediatypeid
+  JOIN invoiceline il
+    ON il.trackid = t.trackid
+  GROUP BY 1
+  ORDER BY 2 DESC) subquery;
+
+
+
+Total number of tracks in each playlist.
+SELECT count(*) AS Total_Tracks, pl.Name AS Playlist_Name
+FROM Playlist pl
+JOIN PlaylistTrack pt ON pl.PlaylistId = pt.PlaylistId
+GROUP BY pl.Name
+
+
+
+
+
+
+How many songs per genre the music store has?
+SELECT G.NAME,
+  	COUNT(T.TRACKID)
+  FROM TRACK T
+  JOIN GENRE G ON T.GENREID = G.GENREID
+  GROUP BY 1
+  ORDER BY 2 DESC
+
+
+
+
+Total sales made by each sales agent.
+SELECT sum(iv.Total) AS 'Total Sales', e.FirstName || ' ' || e.LastName AS 'Sales Agent'
+FROM Invoice iv
+JOIN Customer c ON iv.CustomerId = c.CustomerId
+JOIN Employee e ON c.SupportRepId = e.EmployeeId
+GROUP BY c.SupportRepId;
